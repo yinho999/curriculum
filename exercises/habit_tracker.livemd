@@ -65,7 +65,9 @@ small = 5
 Enter your solution below.
 
 ```elixir
-
+large = 30
+medium = 20
+small = 5
 ```
 
 ## Small, Medium, Large
@@ -95,7 +97,7 @@ small + medium + large
 Enter your answer in the code cell below.
 
 ```elixir
-
+large + small + medium
 ```
 
 ## Multiples
@@ -114,7 +116,7 @@ small * 10 + medium * 5 + large * 3
 Enter your answer below.
 
 ```elixir
-
+10 * small + 5 * medium + 3 * large
 ```
 
 ## Progress Bar
@@ -145,7 +147,7 @@ points = small + medium
 Enter your answer below.
 
 ```elixir
-
+((small + medium) / 40) * 100
 ```
 
 ## Penalties And Rewards
@@ -172,7 +174,7 @@ small * 1.6 * 3 + medium * 2 + large * 2 * 0.5
 Enter your answer below.
 
 ```elixir
-
+3 * small * 1.6 + 2 * medium + 2 * large * 0.5
 ```
 
 ## Bonus: Add Your Own Feature

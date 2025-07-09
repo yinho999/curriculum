@@ -113,6 +113,7 @@ defmodule MultiParamExample do
     IO.inspect(binding(), label: "Called with the following bindings")
   end
 end
+MultiParamExample.call(1,2,3)
 ```
 
 ### Your Turn
@@ -120,7 +121,7 @@ end
 Call the `MutliParamExample.call/3` function with different arguments.
 
 ```elixir
-
+MultiParamExample.call(1,2,3)
 ```
 
 ## Internal Module Functions
@@ -318,7 +319,12 @@ end
 Enter your solution below.
 
 ```elixir
-
+defmodule Languages.Latin do
+  def greeting do
+    "Ego sum"
+  end
+end
+Languages.Latin.greeting
 ```
 
 ### Nested Modules
@@ -393,6 +399,38 @@ We can use module attributes to avoid significant code repetition where many fun
 ### Your Turn
 
 Change the module attributes for the `Hero` module above to match your favourite super hero and villain. Re-evaluate the `Hero` module, then re-evaluate each function call to see the output change.
+
+```elixir
+defmodule Angle do
+  @name "astarties"
+  @nemesis "heretics"
+
+  def introduce do
+    "Here is #{@name}"
+  end
+
+  def catchphrase do 
+    "Burn the mutant, the #{@nemesis}, the aliens"
+  end
+
+  def defeat do
+    "The imperium will never fall"
+  end
+end
+
+```
+
+```elixir
+Angle.introduce()
+```
+
+```elixir
+Angle.catchphrase()
+```
+
+```elixir
+Angle.defeat()
+```
 
 ## Module Scope
 
@@ -516,7 +554,42 @@ end
 </details>
 
 ```elixir
+defmodule Math do
+  @moduledoc """
+  Math Module 
 
+  Mathametical operation
+  """
+
+  @doc """
+  Return sum of two numbers
+
+  ## Example: 
+  iex> Math.add(1,2)
+  3
+  """
+  def add(num1, num2) do
+    num1 + num2
+  end
+  @doc """
+  Return sum of three numbers
+
+  ## Example: 
+  iex> Math.add(1,2,3)
+  6
+  """
+  def add(num1, num2, num3) do
+    num1 + num2 + num3
+  end
+end
+```
+
+```elixir
+Math.add(2, 5) # 7
+```
+
+```elixir
+Math.add(1, 2, 3) # 6
 ```
 
 ## Default Arguments
@@ -583,7 +656,14 @@ Greeting.hello("Andrew")
 ```
 
 ```elixir
+defmodule Greeting do 
+  def hello(name \\ "Jon") do 
+    "Hello #{name}"
+  end
+end
+IO.puts Greeting.hello() #"Hello Jon!"
 
+IO.puts Greeting.hello("Andrew") # "Hello Andrew!"
 ```
 
 ## Documentation
@@ -696,25 +776,25 @@ If this is the case, you either have to fix your code, or remove/comment the cra
 Uncomment the following code and evaluate the cell to see an example. Re-comment your code to avoid crashing the livebook as you continue with the lesson.
 
 ```elixir
-# defmodule DoctestCrash Do
-# @moduledoc """
-# DoctestCrash
-
-# Explains Doctest Crashes With Examples
-# """
-
-# @doc """
-# Purposely Crashes Doctest Using Invalid Pattern Matching
-
-# ## Examples
-
-# iex> {} = DoctestCrash.crash()
-# "2"
-# """
-# def crash do
-
-# end
-# end
+defmodule DoctestCrash do
+  @moduledoc """
+  DoctestCrash
+  
+  Explains Doctest Crashes With Examples
+  """
+  
+  @doc """
+  Purposely Crashes Doctest Using Invalid Pattern Matching
+  
+  ## Examples
+  
+  iex> DoctestCrash.crash()
+  "2"
+  """
+  def crash do
+    "2"
+  end
+end
 ```
 
 ### Your Turn
