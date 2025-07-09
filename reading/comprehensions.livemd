@@ -234,7 +234,9 @@ each generator creates another nested loop and therefore has a significant perfo
 In the Elixir cell below, use a comprehension with a generator of `1..50` to create a list of even integers from `2` to `100`.
 
 ```elixir
-
+for i <- 1..50 do
+  i * 2
+end
 ```
 
 ## Filters
@@ -327,7 +329,9 @@ end
 </details>
 
 ```elixir
-
+for a <- 1..7, b <- 1..7, c <- 1..7, (a+b+c) === 7 do
+  {a,b,c}
+end
 ```
 
 ## Collectables
@@ -406,7 +410,9 @@ end
 </details>
 
 ```elixir
-
+for {a,b} <- %{a: 1, b: 2}, into: %{} do
+  {"#{a}", b}
+end
 ```
 
 ## Why Use A Comprehension?
