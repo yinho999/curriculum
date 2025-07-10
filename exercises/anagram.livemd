@@ -83,6 +83,9 @@ defmodule Anagram do
     true
   """
   def anagram?(word, possible_anagram) do
+    graphemes = String.graphemes(word) |> Enum.sort() |> Enum.join()
+    possible_graphemes = String.graphemes(possible_anagram) |> Enum.sort() |> Enum.join()
+    graphemes == possible_graphemes
   end
 
   @doc """
@@ -100,8 +103,13 @@ defmodule Anagram do
     []
   """
   def filter_anagrams(word_list, anagram) do
+    Enum.filter(word_list, fn word -> anagram?(anagram, word) end)
   end
 end
+```
+
+```elixir
+Enum.slide([1,2,3],0..2, 1)
 ```
 
 ## Bonus: Anagram Solver
@@ -129,7 +137,54 @@ defmodule AnagramSolver do
     ["abc", "acb", "bac", "bca", "cab", "cba"]
   """
   def solve(string) do
+    string
+    |> String.graphemes()
+    |> permutations()
+    |> MapSet.new() # Use MapSet to get unique permutations
+    |> Enum.map(&Enum.join/1)
+    |> Enum.sort() # Sorting provides a consistent, predictable output
   end
+
+  # Private helper function to generate permutations of a list
+  defp permutations([]) do
+    [[]] # Base case: a list containing one empty permutation
+  end
+
+  defp permutations([head | tail]) do
+    # 1. Recursively get permutations of the rest of the list
+    # 2. For each of those, insert the head into every possible position
+    for perm <- permutations(tail), i <- 0..length(perm) do
+      List.insert_at(perm, i, head)
+    end
+  end
+  # def solve(string) do
+  #   graphemes = string |> String.graphemes
+  #   count = graphemes |> Enum.count() 
+  #   case count < 2 do
+  #     true -> graphemes
+  #     false -> 
+  #       shift_count = 0..count - 1
+  #       all_possibilities = for w <- graphemes do 
+  #         rest = Enum.filter graphemes, &(&1!=w)
+  #         row = for i <- shift_count do 
+  #           left(rest,length(rest) - i) |> Enum.join()
+  #         end
+  #         Enum.map(row, &("#{w}#{&1}"))
+  #       end
+  #       all_possibilities |> List.flatten() |> MapSet.new |> Enum.to_list()
+  #   end
+    
+  # end
+
+  # def left(list, n) when is_list(list) and is_integer(n) and n>=0 do 
+  #   size = Enum.count(list)
+  #   offset = rem(n, size)
+
+  #   list 
+  #   |> Enum.reverse_slice(offset, size)
+  #   |> Enum.reverse_slice(0, offset)
+  #   |> Enum.reverse_slice(0, size)
+  # end
 end
 ```
 
