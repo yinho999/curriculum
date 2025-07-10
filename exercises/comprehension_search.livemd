@@ -126,11 +126,33 @@ end
 ```elixir
 defmodule Products do
   def all_items do
+    for i <- 1..Enum.random(1..100), item <- ["computer", "phone", "tablet"] do
+      %{name: item, price: i}
+    end
   end
 
-  def search(items, filters) do
+  def search(items, filters \\ [min: nil, max: nil, name: nil]) do
+    items |> Enum.filter(fn item ->
+      min_result = (filters[:min] == nil || item.price >= filters[:min])
+      max_result = (filters[:max] == nil || item.price <= filters[:max])
+      name_result = (filters[:name] == nil || item.name == filters[:name])
+      min_result and max_result and name_result
+    end)
   end
 end
+```
+
+```elixir
+all_items = Products.all_items()
+
+[
+  %{name: "computer", price: 10},
+  %{name: "computer", price: 11},
+  %{name: "computer", price: 12},
+  %{name: "computer", price: 13},
+  %{name: "computer", price: 14},
+  %{name: "computer", price: 15},
+] = Products.search(all_items, [min: 10, max: 15, name: "computer"])
 ```
 
 ## Commit Your Progress
