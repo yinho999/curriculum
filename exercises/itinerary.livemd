@@ -74,6 +74,8 @@ defmodule Itinerary do
     
   """
   def has_time?(start, finish, minutes) do
+    diff = DateTime.diff finish, start, :minute
+    diff >= minutes
   end
 end
 ```
