@@ -123,6 +123,10 @@ end
 Implement the `Rollable` module as documented below.
 
 ```elixir
+Regex.scan(~r/(\d+)d(\d+)/, "2d12")
+```
+
+```elixir
 defmodule Rollable do
   @moduledoc """
   Documentation for `Rollable`
@@ -158,11 +162,25 @@ defmodule Rollable do
     "Ice Shard: deal [12d4](https://www.google.com/search?q=roll+12d4) ice damage."
   """
   def replace(string) do
+    Regex.replace(~r/\d+d\d+/,string, fn matches ->
+      "[#{matches}](https://www.google.com/search?q=roll+#{matches})"
+    end)
   end
 
   def roll(string) do
+   [[_,num_result_str, range_str]] = Regex.scan(~r/(\d+)d(\d+)/, string)
+    {num_result, ""} = Integer.parse(num_result_str)
+    {range, ""} = Integer.parse(range_str)
+    Enum.map(1..num_result, fn _ ->
+      Enum.random(1..range)
+    end)
+    |> Enum.sum()
   end
 end
+```
+
+```elixir
+Rollable.roll("2d12")
 ```
 
 ## Commit Your Progress
