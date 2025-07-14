@@ -100,6 +100,10 @@ end
 Implement the `PhoneNumber` module as documented below.
 
 ```elixir
+Regex.scan(~r/(\d{3}).*(\d{3}).*(\d{4})/, "1231231234 4564564567")
+```
+
+```elixir
 defmodule PhoneNumber do
   @moduledoc """
   Documentation for `PhoneNumber`
@@ -129,6 +133,13 @@ defmodule PhoneNumber do
     "123-123-1234 456-456-4567"
   """
   def parse(string) do
+   string
+    |> String.replace(~r/\D/, "")
+    |> String.split(~r/(.{10})/, include_captures: true, trim: true)
+    |> Enum.map(fn phone_number ->
+      Regex.replace(~r/(\d{3})(\d{3})(\d{4})/, phone_number, "\\1-\\2-\\3")
+    end)
+    |> Enum.join(" ")
   end
 end
 ```
