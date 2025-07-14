@@ -361,7 +361,11 @@ end)
 </details>
 
 ```elixir
-
+Regex.replace(~r/(\d{3}-)\d{3}-\d{4}/,"999-999-9999", fn match, group1 ->
+  IO.inspect(match, label: "match")
+  IO.inspect(group1, label: "group1")
+  "#{group1}XXX-XXXX"
+end )
 ```
 
 ## Options
@@ -463,7 +467,17 @@ end)
 </details>
 
 ```elixir
+Regex.scan(~r/(?<=#)(\d{3})(\d{3})(\d{4})/,"#9999999999")
+```
 
+```elixir
+Regex.replace(~r/\#(\d{3})(\d{3})(\d{4})/,"#9999999999", fn matches, group1, group2, group3 ->
+  IO.inspect(matches, label: "Match")
+  IO.inspect(group1, label: "Group1")
+  IO.inspect(group2, label: "Group2")
+  IO.inspect(group3, label: "Group3")
+  "#{group1}-#{group2}-#{group3}"
+end)
 ```
 
 ## Further Reading
