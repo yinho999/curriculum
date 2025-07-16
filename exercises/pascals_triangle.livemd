@@ -173,9 +173,29 @@ defmodule Pascal do
       iex> Pascal.of(5)
       [[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]
   """
+  def of(1) do
+    [
+      [1]
+    ]
+  end
+  def of(2) do
+    [
+      [1],
+      [1, 1]
+    ]
+  end
   def of(n) do
+    previous_layer = of(n-1)
+    middle = Enum.chunk_every(Enum.at(previous_layer,-1), 2,1,:discard)
+      |> Enum.map(fn [x,y] -> x+y end)
+    last_layer = [[1] ++ middle ++ [1]]
+    previous_layer ++ last_layer
   end
 end
+```
+
+```elixir
+
 ```
 
 ## Commit Your Progress
