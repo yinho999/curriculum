@@ -84,7 +84,25 @@ end
 ```elixir
 defmodule Metric do
   def convert(from, to) do
+    meter = case from do
+      {:millimeter, value} -> cm_to_meter(value/100)
+      {:centimeter, value} -> cm_to_meter(value)
+      {:meter, value} -> value
+      {:kilometer, value} -> value * 1000
+    end
+    case to do 
+      :millimeter -> meter * 1000
+      :centimeter -> meter * 100
+      :meter -> meter 
+      :kilometer -> meter / 1000
+    end
   end
+
+  @spec cm_to_meter(float()):: float()
+  defp cm_to_meter(cm) do 
+    cm/100
+  end
+
 end
 ```
 
