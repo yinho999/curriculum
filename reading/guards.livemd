@@ -245,7 +245,8 @@ end
 
 ```elixir
 defmodule Say do
-  def hello(name) do
+  def hello(name) when is_binary(name) do 
+    "Hello, #{name}"
   end
 end
 ```
@@ -289,7 +290,24 @@ Enter your solution below.
 
 ```elixir
 defmodule Percent do
-  def display(percent) do
+  defguard zero_to_hundred(number) when is_number(number) and 100 >= number and 0 < number
+  @doc """
+  ## Examples
+   iex> Percent.display(0.1)
+   "0.1%"
+
+    iex> Percent.display(100)
+    "100%"
+
+  iex> Percent.display(0)
+  ** (FunctionClauseError) no function clause matching in Percent.display/1
+  
+  
+  iex> Percent.display(101)
+  ** (FunctionClauseError) no function clause matching in Percent.display/1
+  """
+  def display(percent) when zero_to_hundred(percent) do
+    "#{percent}%"
   end
 end
 ```
