@@ -119,11 +119,34 @@ defmodule Math do
   iex> Math.add(2, "2")
   ** (FunctionClauseError) no function clause matching in Math.add/2
   """
-
-  def add(value1, value2) do
+  defguard is_numbers(val1, val2) when is_number(val1) and is_number(val2)
+  defguard is_strings(val1, val2) when is_binary(val1) and is_binary(val2)
+  defguard is_lists(val1, val2) when is_list(val1) and is_list(val2)
+  def add(value1, value2) when is_numbers(value1, value2) do
+    value1 + value2
   end
 
-  def subtract(value1, value2) do
+  def add(value1, value2) when is_strings(value1, value2) do
+    value1 <> value2
+  end
+  
+  def add(value1, value2) when is_lists(value1, value2) do
+    value1 ++ value2
+  end
+  
+  def subtract(value1, value2) when is_numbers(value1, value2)  do
+    value1 - value2
+  end
+
+  def subtract(value1, value2) when is_strings(value1, value2)  do
+    value1_list = String.graphemes(value1)
+    value2_list = String.graphemes(value2)
+    value1_list -- value2_list 
+    |> Enum.join()
+  end
+  
+  def subtract(value1, value2) when is_lists(value1, value2)  do
+    value1 -- value2
   end
 end
 ```
