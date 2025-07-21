@@ -126,6 +126,7 @@ defprotocol Math do
 
   iex> Math.add({}, {})
   ** (Protocol.UndefinedError) protocol Math not implemented for {} of type Tuple
+
   """
 
   def add(value1, value2)
@@ -134,6 +135,39 @@ defprotocol Math do
 end
 
 # Define Implementations...
+
+defimpl Math, for: Integer do 
+  def add(value1, value2) do 
+    value1 + value2
+  end
+
+  def subtract(value1, value2) do
+    value1 - value2
+  end
+end
+
+defimpl Math, for: List do 
+  def add(value1, value2) do 
+    value1 ++ value2
+  end
+
+  def subtract(value1, value2) do
+    value1 -- value2
+  end
+end
+
+defimpl Math, for: BitString do 
+  def add(value1, value2) do 
+    value1 <> value2
+  end
+
+  def subtract(value1, value2) do
+    String.graphemes(value1) -- String.graphemes(value2)
+    |> Enum.join()
+  end
+end
+
+
 ```
 
 ## Commit Your Progress
