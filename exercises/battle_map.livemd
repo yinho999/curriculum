@@ -64,7 +64,7 @@ defmodule Wizard do
 end
 
 defmodule Barbarian do
-  defstruct []
+  defstruct [] 
 end
 ```
 
@@ -102,6 +102,14 @@ end
 
 ```elixir
 # Implementation Goes Here:
+
+defimpl Character, for: Barbarian do
+  def can_attack?(_character, origin, target) do 
+    {ox,oy} = origin
+    {tx,ty} = target 
+    abs(tx-ox)<=2 and abs(ty-oy)<=2
+  end
+end
 
 # You May Use The Following Test Suite To Validate Your Solution.
 ExUnit.start(auto_run: false)
@@ -165,6 +173,15 @@ Create a `Wizard` implementation for the `Character` protocol.
 
 ```elixir
 # Implementation Goes Here:
+defimpl Character, for: Wizard do
+  def can_attack?(_character, origin, target) do 
+    {ox,oy} = origin
+    {tx,ty} = target 
+    abs_x = abs(tx-ox)
+    abs_y = abs(ty-oy)
+    (abs_y == abs_x) or (abs_x == 0 or abs_y == 0) 
+  end
+end
 
 # You May Use The Following Test Suite To Validate Your Solution.
 ExUnit.start(auto_run: false)
@@ -216,7 +233,40 @@ true
 Implement your custom character below.
 
 ```elixir
+defmodule Archer do 
+  defstruct []
+end
 
+defimpl Character, for: Archer do
+  def can_attack?(_character, origin, target) do 
+    {ox,oy} = origin
+    {tx,ty} = target 
+    abs_x = abs(tx-ox)
+    abs_y = abs(ty-oy)
+    (abs_x == 3 or abs_y == 3) and (abs_x <= 3 and abs_y <= 3) 
+  end
+end
+
+# You May Use The Following Test Suite To Validate Your Solution.
+ExUnit.start(auto_run: false)
+
+defmodule ArcherTests do
+  use ExUnit.Case
+
+  describe "Archer" do
+    test "can attack in eight directions" do
+      # up, up-right, right, down-right, down, down-left, left, up-left
+      assert Character.can_attack?(%Archer{}, {4, 4}, {7, 7})
+      assert Character.can_attack?(%Archer{}, {4, 4}, {3, 7})
+    end
+
+    test "cannot attack invalid squares" do
+      refute Character.can_attack?(%Archer{}, {4, 4}, {-1, 7})
+    end
+  end
+end
+
+ExUnit.run()
 ```
 
 ## Commit Your Progress
