@@ -66,6 +66,12 @@ end
 Implement the `TodoList` module as documented. You may choose any file for your persistence mechanism.
 
 ```elixir
+file_path = Path.absname("./todo.txt")
+file_path
+```
+
+```elixir
+
 defmodule TodoList do
   @moduledoc """
   Documentation for `TodoList`
@@ -79,6 +85,13 @@ defmodule TodoList do
       []
   """
   def list do
+    case File.read(Path.absname("./todo.txt")) do 
+      {:ok, binary} -> :erlang.binary_to_term(binary)
+      {:error, :enoent } -> 
+        File.write!(Path.absname("./todo.txt"), :erlang.term_to_binary([]))
+        []
+      _ -> []
+    end
   end
 
   @doc """
@@ -92,6 +105,14 @@ defmodule TodoList do
       ["task 2", "task 1"]
   """
   def add(item) do
+    case File.read(Path.absname("./todo.txt")) do 
+      {:ok, binary} -> 
+        content = :erlang.binary_to_term(binary)
+        File.write!(Path.absname("./todo.txt"), :erlang.term_to_binary([item | content]))
+      {:error, :enoent } -> 
+        File.write!(Path.absname("./todo.txt"), :erlang.term_to_binary([item]))
+      _ -> [item]
+    end
   end
 
   @doc """
@@ -105,8 +126,29 @@ defmodule TodoList do
       ["task 2", "task 1"]
   """
   def complete(item) do
+    case File.read(Path.absname("./todo.txt")) do 
+      {:ok, binary} -> 
+        result = :erlang.binary_to_term(binary)
+        |>List.delete(item)
+        File.write!(Path.absname("./todo.txt"), :erlang.term_to_binary(result), [:write])
+      {:error, :enoent } -> 
+        File.write!(Path.absname("./todo.txt"), :erlang.term_to_binary([]))
+      _ -> [item]
+    end
   end
 end
+```
+
+```elixir
+TodoList.add("task 1")
+TodoList.add("task 2")
+TodoList.list()
+```
+
+```elixir
+TodoList.add("finish homework")
+TodoList.complete("finish homework")
+TodoList.list()
 ```
 
 ## Commit Your Progress
