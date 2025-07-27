@@ -140,6 +140,16 @@ defmodule CounterServer do
   end
 
   @impl true
+  def handle_cast({:increment_by, increment_by}, state) do
+    {:noreply, state + increment_by}
+  end
+
+  @impl true
+  def handle_cast(:decrease, state) do
+    {:noreply, state - 1}
+  end
+
+  @impl true
   def handle_call(:get_count, _from, state) do
     # `response` bound for sake of clarity.
     response = state
@@ -422,6 +432,7 @@ Named processes are unique, there cannot be two processes with the same name. Na
 ```elixir
 defmodule NamedCounter do
   def start_link(_opts) do
+    # GenServer.start_link(counter module, init_arg in init function, name: Named Processes)
     GenServer.start_link(NamedCounter, [], name: NamedCounter)
   end
 
@@ -474,6 +485,7 @@ defmodule ConfigurableServer do
   end
 
   def init(init_arg) do
+    IO.puts init_arg
     {:ok, init_arg}
   end
 end
