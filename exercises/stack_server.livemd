@@ -91,20 +91,18 @@ defmodule Stack do
   end
 
   @impl true 
-  def handle_cast({:push, state}, stack) do
-    {:noreply, [state | stack]}
+  def handle_cast({:push, element}, stack) do
+    {:noreply, [element | stack]}
   end
   
   @impl true 
-  def handle_call(:pop, _from, state) do
-    case Enum.count(state) == 0 do
-      true ->
-        {:reply,nil , state}
-      false ->     
-        [to_caller | new_state] = state
-        {:reply,to_caller, new_state}
+  def handle_call(:pop, _from, stack) do
+    case stack do
+      [] ->
+        {:reply, nil, []}
+      [head | tail] ->
+        {:reply, head, tail}
     end
-
   end
 end
 ```
