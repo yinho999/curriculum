@@ -64,6 +64,142 @@ This will be a **pair testing** exercise Using TDD (Test Driven Development). We
 
 As **the implementer** you are encouraged to *fake* your solution (within reason) if the test allows for it. This will encourage your **tester** to write a better test.
 
+```elixir
+defmodule Stack do
+  @moduledoc"""
+  A GenServer Implementation of a Stack data structure(LIFO)
+  """
+  use GenServer
+
+  # Server API
+  @doc"""
+  Starts the Stack GenServer.
+  Accept an initial list as the default argument
+  """
+  @spec start_link(list(term())) :: GenServer.on_start()
+  def start_link(initial_list \\ []) when is_list(initial_list) do
+    GenServer.start_link(__MODULE__, Enum.reverse(initial_list), name: __MODULE__)
+  end
+
+  @doc"""
+  Add an element on top of the stack.
+  """
+  @spec push(GenServer.server(), term()) :: :ok
+  def push(pid, element) do 
+    GenServer.cast(pid, {:push, element})
+  end
+  
+
+  @doc"""
+  Remove and return an element from the top of the stack or return `nil` if the stack is empty. 
+  Accepts a GenServer pid.
+  """
+  @spec pop(GenServer.server()) :: term() | nil
+  def pop(pid) do
+    GenServer.call(pid, :pop)
+  end
+
+  # Client API 
+
+  @impl true
+  def init(initial_stack) do 
+    {:ok, initial_stack}
+  end
+
+  @impl true 
+  def handle_cast({:push, element}, state) do
+    {:noreply, [element | state]}
+  end
+
+  @impl true 
+  def handle_call(:pop, _from, []) do 
+    {:reply, nil, []}
+  end
+  
+
+  @impl true 
+  def handle_call(:pop, _from, state) do 
+      [head | tail] = state 
+      {:reply, head, tail}
+  end
+  
+end
+```
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule StackTest do
+  use ExUnit.Case
+  # start_link/1 - default state
+  # start_link/1 - default configuration
+  # pop/1 - remove one element from stack
+  # pop/1 - remove multiple elements from stack
+  # pop/1 - remove element from empty stack
+  # push/2 - add element to empty stack
+  # push/2 - add element to stack with multiple elements
+  describe "start_link/1" do
+    test "default state" do
+      {:ok, pid} = Stack.start_link()
+      assert Stack.pop(pid) == nil
+    end
+  
+    test "default configuration" do
+      {:ok, pid} = Stack.start_link([:c, :b, :a])
+      assert Stack.pop(pid) == :a
+      assert Stack.pop(pid) == :b
+      assert Stack.pop(pid) == :c
+    end    
+  end
+
+  describe "push/2" do
+    test "add element to empty stack" do
+      {:ok, pid} = Stack.start_link()
+      :ok = Stack.push(pid, :a)
+      assert Stack.pop(pid) == :a
+      assert Stack.pop(pid) == nil
+    end
+
+    test "add element to stack with multiple elements" do
+      {:ok, pid} = Stack.start_link([:world, :hello])
+      :ok = Stack.push(pid, :elixir)
+      assert Stack.pop(pid) == :elixir
+      assert Stack.pop(pid) == :hello
+      assert Stack.pop(pid) == :world
+      assert Stack.pop(pid) == nil
+    end
+  end
+
+  describe "pop/1" do
+    test "remove one element from stack" do
+      {:ok, pid} = Stack.start_link([:b, :a])
+      assert Stack.pop(pid) == :a
+      # The state of the stack should now be just [:b]
+      assert Stack.pop(pid) == :b
+    end
+    
+    test "removes multiple elements from a stack by calling pop sequentially" do
+      {:ok, pid} = Stack.start_link([:c, :b, :a])
+
+      # To remove multiple elements, pop/1 is called multiple times.
+      assert Stack.pop(pid) == :a
+      assert Stack.pop(pid) == :b
+      assert Stack.pop(pid) == :c
+    end
+
+    test "returns nil when removing an element from an empty stack" do
+      {:ok, pid} = Stack.start_link([])
+      assert Stack.pop(pid) == nil
+      # Assert that it remains nil on subsequent calls
+      assert Stack.pop(pid) == nil
+    end
+  end
+
+end
+
+ExUnit.run()
+```
+
 ## Commit Your Progress
 
 DockYard Academy now recommends you use the latest [Release](https://github.com/DockYard-Academy/curriculum/releases) rather than forking or cloning our repository.
