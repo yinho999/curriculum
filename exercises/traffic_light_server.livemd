@@ -147,7 +147,7 @@ defmodule TrafficLights do
       {:ok, opts}
     end
 
-    def handle_call(:current_light,_from , state) do
+    def handle_call(:current_light ,_from ,state) do
       {:reply, state, state}
     end
 
@@ -158,6 +158,45 @@ defmodule TrafficLights do
         :red -> :green 
       end
       {:noreply, new_state}
+    end
+  end
+
+  defmodule Grid do 
+    use GenServer
+
+    def start_link(opts) do
+      lights = Enum.map(1..5, fn _ -> 
+        {:ok, pid} = TrafficLights.Light.start_link(opts)
+        pid
+      end)
+      GenServer.start_link(__MODULE__, %{count: 0, lights: lights})
+    end
+
+    def current_lights(pid) do
+      GenServer.call(pid, :current_lights)
+    end
+
+    def transition(pid) do
+      GenServer.cast(pid, :transition)
+    end
+
+    # Server API
+    def init(opts) do
+      {:ok, opts}
+    end
+
+    def handle_call(:current_lights, _from, state) do
+      %{count: _, lights: lights} = state
+      current_lights = Enum.map(lights, fn pid ->
+        TrafficLights.Light.current_light(pid)
+      end)
+      {:reply, current_lights, state}
+    end
+
+    def handle_cast(:transition, state) do 
+      %{count: count, lights: lights} = state
+      Enum.at(lights, count) |> TrafficLights.Light.transition()
+      {:noreply, %{count: rem(count+1, length(lights)), lights: lights}}
     end
   end
 end
@@ -320,6 +359,30 @@ end
 ```
 
 </details>
+
+```elixir
+{:ok, pid} = TrafficLights.Grid.start_link([])
+
+:ok = TrafficLights.Grid.transition(pid)
+
+[:yellow, :green, :green, :green, :green] = TrafficLights.Grid.current_lights(pid)
+
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+
+[:red, :yellow, :yellow, :yellow, :yellow] = TrafficLights.Grid.current_lights(pid)
+
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+:ok = TrafficLights.Grid.transition(pid)
+
+[:green, :red, :red, :red, :red] = TrafficLights.Grid.current_lights(pid)
+```
 
 ## Commit Your Progress
 
