@@ -124,46 +124,40 @@ end
 </details>
 
 ```elixir
-defmodule TrafficLights do 
-  defmodule Light do
+defmodule TrafficLights do
+  defmodule Light do 
     use GenServer
+    @type color() :: :green | :yellow | :red 
 
-    @type state :: :green | :yellow | :red
-    
     def start_link(_opts) do 
       GenServer.start_link(__MODULE__, :green)
     end
 
-    
-    @spec current_light(GenServer.server()) :: state
-    def current_light(pid) do 
-      GenServer.call(pid, :current)
+    @spec current_light(GenServer.server()) :: color()
+    def current_light(pid) do
+      GenServer.call(pid, :current_light)
     end
 
-    @spec transition(GenServer.server()) :: :ok
-    def transition(pid) do 
+    def transition(pid) do
       GenServer.cast(pid, :transition)
     end
 
-    # Server API
-    @impl true 
-    def init(opts) do 
+    # Server api 
+    def init(opts) do
       {:ok, opts}
     end
 
-    @impl true 
-    def handle_cast(:transition, state) do
-      next_state = case state do
-        :green -> :yellow
-        :yellow -> :red
-        :red -> :green
-      end
-      {:noreply, next_state}
+    def handle_call(:current_light,_from , state) do
+      {:reply, state, state}
     end
 
-    @impl true
-    def handle_call(:current, _from, state) do
-      {:reply, state, state}
+    def handle_cast(:transition, state) do
+      new_state = case state do
+        :green -> :yellow
+        :yellow -> :red 
+        :red -> :green 
+      end
+      {:noreply, new_state}
     end
   end
 end
