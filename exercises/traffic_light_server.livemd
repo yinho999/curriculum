@@ -123,6 +123,67 @@ end
 
 </details>
 
+```elixir
+defmodule TrafficLights do 
+  defmodule Light do
+    use GenServer
+
+    @type state :: :green | :yellow | :red
+    
+    def start_link(_opts) do 
+      GenServer.start_link(__MODULE__, :green)
+    end
+
+    
+    @spec current_light(GenServer.server()) :: state
+    def current_light(pid) do 
+      GenServer.call(pid, :current)
+    end
+
+    @spec transition(GenServer.server()) :: :ok
+    def transition(pid) do 
+      GenServer.cast(pid, :transition)
+    end
+
+    # Server API
+    @impl true 
+    def init(opts) do 
+      {:ok, opts}
+    end
+
+    @impl true 
+    def handle_cast(:transition, state) do
+      next_state = case state do
+        :green -> :yellow
+        :yellow -> :red
+        :red -> :green
+      end
+      {:noreply, next_state}
+    end
+
+    @impl true
+    def handle_call(:current, _from, state) do
+      {:reply, state, state}
+    end
+  end
+end
+```
+
+```elixir
+{:ok, pid} = TrafficLights.Light.start_link([])
+
+:green = TrafficLights.Light.current_light(pid)
+:ok = TrafficLights.Light.transition(pid)
+
+:yellow = TrafficLights.Light.current_light(pid)
+:ok = TrafficLights.Light.transition(pid)
+
+:red = TrafficLights.Light.current_light(pid)
+:ok = TrafficLights.Light.transition(pid)
+
+:green = TrafficLights.Light.current_light(pid)
+```
+
 ## TrafficGrid
 
 Create a `TrafficLights.Grid` [GenServer](https://hexdocs.pm/elixir/GenServer.html) that manages five `TrafficLights.Light` processes.
