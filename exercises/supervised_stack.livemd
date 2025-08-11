@@ -44,7 +44,7 @@ Here's an example Stack GenServer you can use.
 defmodule Stack do
   use GenServer
 
-  def start_link(opts) do
+  def start_link(_opts) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
@@ -74,7 +74,7 @@ Uncomment the following code to watch the `Stack` crash.
 
 ```elixir
 # {:ok, pid} = GenServer.start_link(Stack, [])
-# GenServer.call(stack_pid, :pop)
+# GenServer.call(pid, :pop)
 ```
 
 Normally, we could handle this by using control flow. For example, we could make another `handle_call/3` function clause for when the stack is empty.
@@ -104,7 +104,14 @@ children = [
 
 </details>
 
-<!-- livebook:{"break_markdown":true} -->
+```elixir
+children = [
+  %{id: :stack1, start: { Stack, :start_link, [[]] }}
+]
+
+{:ok, supervisor_pid} = Supervisor.start_link(children, strategy: :one_for_one)
+Supervisor.which_children(supervisor_pid)
+```
 
 ### Crash The Stack
 
