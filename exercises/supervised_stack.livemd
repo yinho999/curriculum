@@ -74,7 +74,7 @@ Uncomment the following code to watch the `Stack` crash.
 
 ```elixir
 # {:ok, pid} = GenServer.start_link(Stack, [])
-# GenServer.call(pid, :pop)
+# GenServer.call(stack_pid, :pop)
 ```
 
 Normally, we could handle this by using control flow. For example, we could make another `handle_call/3` function clause for when the stack is empty.
@@ -106,11 +106,9 @@ children = [
 
 ```elixir
 children = [
-  %{id: :stack1, start: { Stack, :start_link, [[]] }}
+  %{id: :stack1, start: {Stack, :start_link, [[]]}}
 ]
-
-{:ok, supervisor_pid} = Supervisor.start_link(children, strategy: :one_for_one)
-Supervisor.which_children(supervisor_pid)
+{:ok, pid} = Supervisor.start_link(children, strategy: :one_for_one)
 ```
 
 ### Crash The Stack
